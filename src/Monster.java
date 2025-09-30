@@ -29,4 +29,10 @@ public class Monster {
     public String special() { return this.special; }
 
 
+    //MUTATOR METHOD
+    public void takeDamage(){
+        
+    }
+
+
 }
