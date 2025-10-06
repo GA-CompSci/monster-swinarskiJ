@@ -2,11 +2,16 @@ import java.util.Scanner;
 
 public class App {
 
+
+    //Maxed stats (set to default)
     private static int health = 100;
     private static int speed = 10;
     private static int shield = 50;
     private static int damage = 50;
     private static int heal = 50;
+
+    //State Vars (automatically set to false)
+    private static boolean isDefend = false;
 
     // CLASS VARIABLE
     private static Monster[] monsters;
@@ -16,7 +21,7 @@ public class App {
         System.out.print("How many monsters will you slay: ");
         int num = input.nextInt(); // TODO: handle errors if it's not a number
         monsters = new Monster[num];
-        // build all the monsters
+                // build all the monsters
         for(int i = 0; i < monsters.length; i++){
             monsters[i] = new Monster(); // TODO: add some specials
         }
@@ -33,17 +38,26 @@ public class App {
         //build choice
 
         if(choice == 1){
-            //low heal and shield
-            heal = 5;
+            //heal and shield
+            shield -= (int)(Math.random()* 45 + 1) + 5;
+            heal -= (int)(Math.random()* 46) + 5;
+    
         }
         else if(choice == 2){
+            // speed and dmg
+            speed -= (int)(Math.random()* 9) + 1;
+            damage -= (int)(Math.random()* 26) + 5;
             
         }
         else if(choice == 3){
-            
+            //dmg and shield
+            damage -= (int)(Math.random()* 26) + 5;
+            shield -= (int)(Math.random()* 46) + 5;
         }
         else{
-            
+            //hp and heal
+            health-= (int)(Math.random()* 21) + 5;
+            heal-= (int)(Math.random()* 46) + 5;
         }
     
 
@@ -55,10 +69,8 @@ public class App {
         
 
          // GAME LOOP
-        while(monsterCount(0)>0)
-        {
-        // Who is first?
-
+        while(monsterCount(0)>0){
+            isDefend = false;
 
         //Options
             System.out.println("---OPTIONS---");
@@ -67,33 +79,85 @@ public class App {
             System.out.println("3) Heal");
             System.out.println("4) Pass");
             System.out.print("Choice: ");
-            int choice = input.nextInt();  //TODO: error handle on non-int input
+            choice = input.nextInt();  //TODO: error handle on non-int input
 
             //choice
 
             if(choice == 1){
-
+                int dmg = (int)(Math.random()* damage + 1);
+                if (dmg == damage) dmg = currentMonster.health();
+                
+                else if (dmg == 0) {
+                    System.out.println("----FAIL----");
+                    System.out.println("You managed to hit yourself instead of the enemy... how?");
+                    health -= 10;
+                }
+                
+                else currentMonster.takeDamage(dmg);
             }
             else if(choice == 2){
-                
+                isDefend = true;
+                System.err.println("----SHIELD UP!----");
             }
             else if(choice == 3){
-                
+                int h = (int)(Math.random()+ heal + 1);
+                health += h;
+                System.out.println("----HEALED FOR " + h +" HP (Current Health: " + health +")----");
             }
             else{
-                
+                speed ++;
+                System.out.println("----SPEED INCREASED (Current Speed: " + speed +")----");
             }
 
             if (currentMonster.health() <=0){
-                System.out.println("\n !!Monster has been slayed !!\n");
+                System.out.println("\n !! Monster has been slayed !!\n");
                 currentMonster = getNextMonster();
+                reportMonsters();
+                continue; // GO AGAIN AFTER MONSTER IS SLAYED
             }
+
+            //MONSTER'S TURN
+            int speedCheck = (int)(Math.random()* 100);
+            if(speedCheck <= speed){ // BONUS TURN
+                System.out.println("\n !! BONUS TURN !!\n");
+                continue;
+            }
+            else{
+                int incomingDamage = (int)(Math.random()* currentMonster.damage() + 1);
+                if (isDefend){ 
+                    incomingDamage -= shield;
+                    if (incomingDamage < 0){
+                        incomingDamage = 0;
+                    }
+                    System.out.println("----SHIELD HAS ABSORBED " + shield + " DAMAGE----");
+                }
+                health -= incomingDamage;
+            }
+
+            //DID I DIE?
+            if (health <= 0){
+                reportMonsters();
+                System.out.println("----YOU WERE KILLED IN COMBAT----");
+                System.out.println("\n\n-------GAME OVER-------\n\n");
+                break;
+            }
+
 
         }
 
     }
 
     public static void reportMonsters(){
+
+        System.out.println("-PLAYER RPORT-");
+        System.out.println("Health: " + health);
+        System.out.println("Heal: " + heal);
+        System.out.println("Speed: " + speed);
+        System.out.println("Damage: " + damage);
+        System.out.println("Shield: " + shield);
+        
+
+
         System.out.println("-MONSTER RPORT-");
 
         for(int i=0; i<monsters.length; i++)

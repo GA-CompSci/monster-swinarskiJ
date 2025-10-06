@@ -30,7 +30,8 @@ public class Monster {
 
 
     //MUTATOR METHOD
-    public void takeDamage(){
+    public void takeDamage(int dmg){
+        health = dmg;
         
     }
 
