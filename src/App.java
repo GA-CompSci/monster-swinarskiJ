@@ -100,7 +100,7 @@ public class App {
                 System.err.println("----SHIELD UP!----");
             }
             else if(choice == 3){
-                int h = (int)(Math.random()+ heal + 1);
+                int h = (int)(Math.random()* heal + 1);
                 health += h;
                 System.out.println("----HEALED FOR " + h +" HP (Current Health: " + health +")----");
             }
@@ -162,22 +162,39 @@ public class App {
 
         for(int i=0; i<monsters.length; i++)
         {
-            System.out.println("Monster #"+i);
-            System.out.println("Health:" + monsters[i].health());
-            System.out.println("Speed:" + monsters[i].speed());
-            System.out.println("Damage:" + monsters[i].damage());
+            System.out.println("Monster #"+i+": ");
+            System.out.print(monsters[i].health()+"hp, ");
+            System.out.print(monsters[i].speed()+" speed, ");
+            System.out.print(monsters[i].damage()+" dmg, ");
             if(!monsters[i].special().equals(""))
             {
                 System.out.println("Special:" + monsters[i].special());
             }
             System.out.println();
         }
+
+        //HP BARS, player, monsters
+        int starCount = Math.max(0,(health/5));
+        String stars = "*".repeat(health/5);
+        String dashes = "-".repeat(20-starCount);
+        System.out.println("["+ stars+dashes +"] PLAYER");
+
+        System.out.print("[");
+        for (int i=0; i<monsters.length; i++){
+            if (monsters[i].health()>0){
+                System.out.print("*");
+            }
+            else{
+                System.out.print("-");
+            }
+        }
+        System.out.print("] MONSTERS LEFT");
         
     }
 
     public static double percentComplete(){
 
-        return 100 - monsterCount(0)/monsters.length*100;
+        return (double)(100 - monsterCount(0)/monsters.length*100);
     }
     
     /**
@@ -201,7 +218,22 @@ public class App {
         return null;
     }
 
+    // reutrns monster from array with lowest health
+    //null if no monster are over 0 hp
+    public static Monster getWeakestMonster() {
+        Monster weakestMonster = getNextMonster();
+        if (weakestMonster == null) return null;
+        
+        for(int i=0; i<monsters.length; i++){
+            if (monsters[i].health() > 0 && monsters[i].health() < weakestMonster.health()){
+                weakestMonster = monsters[i];
+            }
 
+        }
+
+        return weakestMonster;
+
+    }
 
 
 
