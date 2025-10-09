@@ -40,7 +40,7 @@ public class App {
         if(choice == 1){
             //heal and shield
             shield -= (int)(Math.random()* 45 + 1) + 5;
-            heal -= (int)(Math.random()* 46) + 5;
+            heal -= (int)(Math.random()* 30) + 20;
     
         }
         else if(choice == 2){
@@ -57,7 +57,7 @@ public class App {
         else{
             //hp and heal
             health-= (int)(Math.random()* 21) + 5;
-            heal-= (int)(Math.random()* 46) + 5;
+            heal-= (int)(Math.random()* 30) + 20;
         }
     
 
@@ -69,7 +69,7 @@ public class App {
         
 
          // GAME LOOP
-        while(monsterCount(0)>0){
+        while(monsterCount(0) > 0){
             isDefend = false;
 
         //Options
@@ -93,8 +93,12 @@ public class App {
                     health -= 10;
                 }
                 
-                else currentMonster.takeDamage(dmg);
+                else {
+                    currentMonster.takeDamage(dmg);
+                    System.out.println("----HIT MONSTER FOR "+dmg +" DAMAGE (Monster health: "+currentMonster.health()+")----");
+                }
             }
+
             else if(choice == 2){
                 isDefend = true;
                 System.err.println("----SHIELD UP!----");
@@ -102,6 +106,7 @@ public class App {
             else if(choice == 3){
                 int h = (int)(Math.random()* heal + 1);
                 health += h;
+                if (health >100) health = 100;
                 System.out.println("----HEALED FOR " + h +" HP (Current Health: " + health +")----");
             }
             else{
@@ -113,7 +118,7 @@ public class App {
                 System.out.println("\n !! Monster has been slayed !!\n");
                 currentMonster = getNextMonster();
                 reportMonsters();
-                continue; // GO AGAIN AFTER MONSTER IS SLAYED
+                continue; // GO AGAIN AFTER MONSTER IS SLAYED - SLAIN
             }
 
             //MONSTER'S TURN
@@ -132,6 +137,7 @@ public class App {
                     System.out.println("----SHIELD HAS ABSORBED " + shield + " DAMAGE----");
                 }
                 health -= incomingDamage;
+                System.out.println("----MONSTER HIT YOU FOR "+ incomingDamage +" DAMAGE (Current health: "+health+")----");
             }
 
             //DID I DIE?
@@ -144,8 +150,15 @@ public class App {
 
 
         }
+        // END OF GAME RESULTS
+        if (currentMonster == null){
+            System.out.println();
+            System.out.println("YAYAYAYAAYAYAYAYYAYAYAYAYAYYAYA YO YU WINNIWA");
+        }
 
-    }
+        }
+
+    
 
     public static void reportMonsters(){
 
@@ -175,7 +188,7 @@ public class App {
 
         //HP BARS, player, monsters
         int starCount = Math.max(0,(health/5));
-        String stars = "*".repeat(health/5);
+        String stars = "*".repeat(starCount);
         String dashes = "-".repeat(20-starCount);
         System.out.println("["+ stars+dashes +"] PLAYER");
 
